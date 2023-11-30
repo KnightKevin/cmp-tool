@@ -15,6 +15,7 @@
         <module>basic-libs</module>
         <module>base-server</module>
         <module>gateway-server</module>
+        <module>maintenance-server</module>
         <module>connector-server</module>
         <module>operation-server</module>
         <module>vm-server</module>

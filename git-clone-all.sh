@@ -11,7 +11,7 @@ branches=(
     "base-server"
     "gateway-server" 
     "connector-server"
-#    "maintenance-server"
+    "maintenance-server"
     "operation-server"
     "vm-server"
     "rds-server"
