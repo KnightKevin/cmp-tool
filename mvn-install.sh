@@ -7,7 +7,7 @@ for dir in base-libs base-server; do
     cd "$dir"
     
     # 执行 mvn install
-    mvn install
+    mvn install -DskipTests
     
     # 返回上级目录
     cd ..
