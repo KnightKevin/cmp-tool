@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ignoreDir=("logs/" "cloud/")
+ignoreDir=("logs/" "cloud-manager/")
 
 # 进入包含所有仓库的文件夹
 cd ./
