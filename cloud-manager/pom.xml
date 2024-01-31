@@ -1,112 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.0</version>
-        <relativePath/>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.0</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.zscmp.main.cloud</groupId>
+	<artifactId>cloud-manager</artifactId>
+	<version>1.0.0</version>
+	<name>app</name>
+	<description>Demo project for Spring Boot</description>
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+	<dependencies>
 
-    <groupId>com.zscmp.main</groupId>
-    <artifactId>cloud-manager</artifactId>
-    <version>4.0.0</version>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.zscmp</groupId>-->
-<!--            <artifactId>libs</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.zscmp.base-server</groupId>-->
-<!--            <artifactId>provider</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.zscmp.base-server</groupId>-->
-<!--            <artifactId>starter</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.zscmp.connector-server</groupId>-->
-<!--            <artifactId>provider</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.zscmp</groupId>-->
-<!--            <artifactId>gateway</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.zscmp.maintenance-server</groupId>-->
-<!--            <artifactId>provider</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.zscmp.operation-server</groupId>-->
-<!--            <artifactId>provider</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.zscmp.oss-server</groupId>-->
-<!--            <artifactId>provider</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.zscmp.portal-server</groupId>-->
-<!--            <artifactId>provider</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.zscmp.rds-server</groupId>-->
-<!--            <artifactId>provider</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.zscmp.ticket-server</groupId>-->
-<!--            <artifactId>provider</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.zscmp.vm-server</groupId>-->
-<!--            <artifactId>provider</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-
-    </dependencies>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.70</version>
+		</dependency>
 
 
-<!--    <build>-->
-<!--        <finalName>cloud</finalName>-->
-<!--        <plugins>-->
-<!--            &lt;!&ndash; 插件配置，标明jdk版本1.8 &ndash;&gt;-->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                <version>3.8.1</version>-->
-<!--                <configuration>-->
-<!--                    <source>1.8</source>-->
-<!--                    <target>1.8</target>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 
-<!--            &lt;!&ndash; 版本插件配置 &ndash;&gt;-->
-<!--            <plugin>-->
-<!--                <groupId>org.codehaus.mojo</groupId>-->
-<!--                <artifactId>versions-maven-plugin</artifactId>-->
-<!--                <version>2.7</version>-->
-<!--                <configuration>-->
-<!--                    <generateBackupPoms>false</generateBackupPoms>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
+
+		<dependency>
+			<groupId>com.zscmp.vm-server</groupId>
+			<artifactId>provider</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.zscmp.oss-server</groupId>
+			<artifactId>provider</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.zscmp.rds-server</groupId>
+			<artifactId>provider</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.zscmp.maintenance-server</groupId>
+			<artifactId>provider</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.zscmp.operation-server</groupId>
+			<artifactId>provider</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.zscmp.portal-server</groupId>
+			<artifactId>provider</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>
