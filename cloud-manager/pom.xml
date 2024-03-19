@@ -17,10 +17,10 @@
 		<java.version>1.8</java.version>
 	</properties>
 	<dependencies>
-
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -42,36 +42,10 @@
 			<scope>test</scope>
 		</dependency>
 
-
 		<dependency>
-			<groupId>com.zscmp.vm-server</groupId>
-			<artifactId>provider</artifactId>
-			<version>4.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.zscmp.oss-server</groupId>
-			<artifactId>provider</artifactId>
-			<version>4.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.zscmp.rds-server</groupId>
-			<artifactId>provider</artifactId>
-			<version>4.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.zscmp.maintenance-server</groupId>
-			<artifactId>provider</artifactId>
-			<version>4.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.zscmp.operation-server</groupId>
-			<artifactId>provider</artifactId>
-			<version>4.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.zscmp.portal-server</groupId>
-			<artifactId>provider</artifactId>
-			<version>4.0.0</version>
+			<groupId>com.github.javaparser</groupId>
+			<artifactId>javaparser-core</artifactId>
+			<version>3.24.0</version>
 		</dependency>
 
 	</dependencies>
