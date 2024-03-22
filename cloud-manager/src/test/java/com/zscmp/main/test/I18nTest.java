@@ -24,9 +24,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @Slf4j
@@ -115,6 +119,14 @@ public class I18nTest {
         } catch (IOException e) {
             System.err.println("Error walking through the directory: " + e.getMessage());
         }
+    }
+
+    @Test
+    public void dd() {
+        Locale locale = Locale.forLanguageTag("zh-CN");
+
+
+        assertEquals(locale, Locale.SIMPLIFIED_CHINESE);
     }
 
     /**
