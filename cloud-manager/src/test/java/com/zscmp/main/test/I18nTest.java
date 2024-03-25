@@ -2,6 +2,7 @@ package com.zscmp.main.test;
 
 //import com.zscmp.common.annotation.ActionKey;
 //import io.swagger.annotations.ApiOperation;
+
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -14,8 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,7 +30,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @Slf4j
@@ -158,9 +157,21 @@ public class I18nTest {
                                 return;
                             }
 
+                            // 获取注解锁设置的字段值
+                            Optional<AnnotationExpr> optional = m.getAnnotationByName(ActionKey);
+                            AnnotationExpr annotationExpr = optional.get();
+                            String code = getAnnotationValueByName(ACTION_KEY_CODE, annotationExpr);
+
+                            String fileInfo = String.format(javaFile.getFileName().toString()+"#"+m.getNameAsString());
+
+                            if(!StringUtils.hasText(code)) {
+                                list.add(fileInfo+"ActionKey code不可以为空");
+
+                            }
+
                             if (!m.isAnnotationPresent(ApiOperation)) {
                                 n.getAndIncrement();
-                                list.add(String.format(javaFile.getFileName().toString()+"#"+m.getNameAsString()));
+                                list.add(fileInfo+"缺少对应的ApiOperation注解");
                             }
 
                         });
