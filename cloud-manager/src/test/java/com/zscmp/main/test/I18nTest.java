@@ -6,6 +6,7 @@ package com.zscmp.main.test;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.MemberValuePair;
@@ -109,6 +110,95 @@ public class I18nTest {
 
                             actionMap.put(code, value);
                             log.info("{}={}", code, value);
+                });
+            }
+
+            log.info("总条目数：{}", actionMap.size());
+            log.info("不规范的方法定义条目：{}", nonstandardMethod);
+
+        } catch (IOException e) {
+            System.err.println("Error walking through the directory: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void taskI18nTest() {
+        Path startPath = Paths.get("D:\\work_space\\cmp-tool"); // 指定你要遍历的目录路径
+        JavaFileVisitor visitor = new JavaFileVisitor();
+
+        Map<String, String> actionMap = new HashMap<>();
+
+        List<String> nonstandardMethod = new ArrayList<>();
+
+        try {
+            Files.walkFileTree(startPath, visitor);
+            List<Path> javaFiles = visitor.getJavaFiles();
+
+            for (Path javaFile : javaFiles) {
+
+                String javaClassName = javaFile.getFileName().toString().replace(".java", "");
+
+                if (!javaFile.getFileName().toString().contains("TaskKey")) {
+                    continue;
+                }
+
+                CompilationUnit cu = StaticJavaParser.parse(javaFile);
+
+                EnumDeclaration declaration = cu.getEnumByName(javaClassName).orElse(null);
+
+                // 文件可能全部被注释了
+                if (declaration == null) {
+                    continue;
+                }
+
+                String fullClassName = declaration.getFullyQualifiedName().get();
+
+                declaration.getEntries().forEach(i->{
+                    log.info("{} = {}", i.getName(), i.getArguments().get(0).asStringLiteralExpr().asString());
+                });
+            }
+
+            log.info("总条目数：{}", actionMap.size());
+            log.info("不规范的方法定义条目：{}", nonstandardMethod);
+
+        } catch (IOException e) {
+            System.err.println("Error walking through the directory: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void stepI18nTest() {
+        Path startPath = Paths.get("D:\\work_space\\cmp-tool"); // 指定你要遍历的目录路径
+        JavaFileVisitor visitor = new JavaFileVisitor();
+
+        Map<String, String> actionMap = new HashMap<>();
+
+        List<String> nonstandardMethod = new ArrayList<>();
+
+        try {
+            Files.walkFileTree(startPath, visitor);
+            List<Path> javaFiles = visitor.getJavaFiles();
+
+            for (Path javaFile : javaFiles) {
+
+                String javaClassName = javaFile.getFileName().toString().replace(".java", "");
+
+                if (!javaFile.toUri().toString().endsWith("batch/StepKey.java")) {
+                    continue;
+                }
+
+                CompilationUnit cu = StaticJavaParser.parse(javaFile);
+
+                EnumDeclaration declaration = cu.getEnumByName(javaClassName).orElse(null);
+
+                // 文件可能全部被注释了
+                if (declaration == null) {
+                    continue;
+                }
+
+
+                declaration.getEntries().forEach(i->{
+                    log.info("{} = {}", i.getName(), i.getArguments().get(0).asStringLiteralExpr().asString());
                 });
             }
 
