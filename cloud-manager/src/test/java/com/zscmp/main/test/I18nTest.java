@@ -17,10 +17,13 @@ import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.nodeTypes.modifiers.NodeWithPublicModifier;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.zscmp.cloud.manager.JavaFileVisitor;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -28,7 +31,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -317,15 +323,52 @@ public class I18nTest {
     }
 
     @Test
-    public void readI18nFile() throws IOException {
-        Properties properties =loadPropertiesFile("D:\\work_space\\cmp-tool\\maintenance-server\\starter\\src\\main\\resources\\i18n\\Messages_zh_CN.properties");
+    public void readI18nFile() throws Exception {
+        Properties properties =loadPropertiesFile("D:\\work_space\\cmp-tool\\vm-server\\starter\\src\\main\\resources\\i18n\\Messages_zh_CN.properties");
 
-        Map<String, String> map = new HashMap<>();
+        Map<String, Map<String, String>> map = new HashMap<>();
+
+        List<String> ignores = Arrays.asList("action", "preset");
+
         for (String k : properties.stringPropertyNames()) {
-            map.put(k, properties.getProperty(k));
-            log.info("{}={}", k, properties.getProperty(k));
+
+            if (!k.contains(".")) {
+                throw new RuntimeException("key必须有‘.’");
+            }
+
+            String group = k.split("\\.")[0];
+
+            if (ignores.contains(group)) {
+                continue;
+            }
+
+            if (!map.containsKey(group)) {
+                map.put(group, new HashMap<>());
+            }
+
+            map.get(group).put(k, properties.getProperty(k));
         }
 
+//        map.forEach((g, i)->{
+//            i.forEach((k,v)->{
+//                System.out.printf("%s = %s\n", k, v);
+//            });
+//            System.out.println();
+//        });
+
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("map", map);
+
+
+        final String baseDir = "target/gen/";
+        final String filePath = baseDir+"Messages_en_CN.properties";
+
+        deleteDir(baseDir);
+
+        Files.createDirectories(Paths.get(baseDir));
+
+        genFile("i18n.ftl", filePath, model);
 
     }
 
@@ -434,6 +477,52 @@ public class I18nTest {
         File file = new File(filename);
         properties.load(Files.newInputStream(file.toPath()));
         return properties;
+    }
+
+    private void genFile(String ftl, String f, Map<String, Object> m) throws Exception {
+        Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
+        String resourcePath = getClass().getClassLoader().getResource("templates").getPath();
+        cfg.setDirectoryForTemplateLoading(new File(resourcePath));
+        Template template = cfg.getTemplate(ftl);
+        String s = FreeMarkerTemplateUtils.processTemplateIntoString(template, m);
+        writeStringToFile(s, f);
+    }
+
+    private void deleteDir(String baseDir) throws Exception {
+        Path folderPath = Paths.get(baseDir);
+
+        if (Files.notExists(folderPath)) {
+            return;
+        }
+
+        Files.walk(folderPath)
+                .sorted(Comparator.reverseOrder())
+                .forEach(path->{
+                    try {
+                        Files.delete(path);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+    }
+
+    private void writeStringToFile(String content, String filePath) throws IOException {
+
+
+
+
+        // 使用 Paths 工具类获取文件路径
+        Path path = Paths.get(filePath);
+        Files.deleteIfExists(path);
+        Files.createFile(path);
+
+
+        // 使用 Files 类写入文件
+        // 这里使用了 StandardOpenOption.CREATE 和 StandardOpenOption.APPEND
+        // CREATE - 如果文件不存在，则创建；如果文件存在，不做任何事情
+        // APPEND - 如果文件存在，写入的内容会追加到文件末尾；否则，和 CREATE 一样创建新文件
+        // 如果想要每次写入时覆盖文件，可以不使用 StandardOpenOption.APPEND
+        Files.write(path, content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
     }
 
 }
