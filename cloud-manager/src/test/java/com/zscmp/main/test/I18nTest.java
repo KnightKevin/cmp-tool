@@ -304,20 +304,29 @@ public class I18nTest {
         }
     }
 
+    /**
+     * 处理国际化文件,过滤掉不用的key
+     * */
     @Test
-    public void readI18nFile() throws Exception {
+    public void filterI18nFile() throws Exception {
 
         final String modulePath = "D:\\work_space\\cmp-tool\\vm-server\\";
         final String i18nFile = modulePath+"starter\\src\\main\\resources\\i18n\\Messages_zh_CN.properties";
+        final String respCodeFile = modulePath+"\\provider\\src\\main\\java\\com\\zscmp\\vm\\enums\\RespCode.java";
         Properties properties =loadPropertiesFile(i18nFile);
 
         Map<String, Map<String, String>> map = new HashMap<>();
 
-        List<String> ignores = Arrays.asList("action", "preset");
+        List<String> ignores = Arrays.asList("action", "preset", "exception");
 
         List<String> validateStringList = getCheckUtilLiteral(modulePath);
 
+        Map<String, String> respCodeStringMap = getRespCode(respCodeFile);
+
+
         final String validatePrefix = "validate";
+        final String exceptionPrefix = "exception";
+
 
         for (String k : properties.stringPropertyNames()) {
 
@@ -338,6 +347,13 @@ public class I18nTest {
             map.get(group).put(k, properties.getProperty(k));
         }
 
+        // 添加resp code数据
+        Map<String, String> respCodeI18nMap = new HashMap<>();
+        respCodeStringMap.forEach((k,v)->{
+            respCodeI18nMap.put(exceptionPrefix+"."+k, v);
+        });
+        map.put(exceptionPrefix, respCodeI18nMap);
+
         // 开始过滤
         map.forEach((group, items)->{
             Map<String, String> afterItems = new HashMap<>();
@@ -353,14 +369,6 @@ public class I18nTest {
                 items.putAll(afterItems);
             }
         });
-
-//        map.forEach((g, i)->{
-//            i.forEach((k,v)->{
-//                System.out.printf("%s = %s\n", k, v);
-//            });
-//            System.out.println();
-//        });
-
 
         Map<String, Object> model = new HashMap<>();
         model.put("map", map);
@@ -421,6 +429,30 @@ public class I18nTest {
         }
 
         return params;
+    }
+
+    private Map<String, String> getRespCode(String filename) throws Exception {
+
+        Path filePath = new File(filename).toPath();
+
+        CompilationUnit cu = StaticJavaParser.parse(filePath);
+
+        String enumName = "RespCode";
+
+        EnumDeclaration declaration = cu.getEnumByName(enumName).orElse(null);
+
+        // 文件可能全部被注释了
+        if (declaration == null) {
+            throw new RuntimeException("error");
+        }
+
+
+        Map<String, String> map = new HashMap<>();
+        declaration.getEntries().forEach(i->{
+            map.put(i.getArguments().get(0).toString(), i.getArguments().get(1).toString());
+        });
+
+        return map;
     }
 
 
