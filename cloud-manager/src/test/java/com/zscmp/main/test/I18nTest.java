@@ -310,7 +310,7 @@ public class I18nTest {
 
         final String modulePath = "D:\\work_space\\cmp-tool\\base-server\\";
         final String i18nFile = modulePath+"starter\\src\\main\\resources\\i18n\\Messages_zh_CN.properties";
-        final String respCodeFile = modulePath+"\\provider\\src\\main\\java\\com\\zscmp\\base\\enums\\RespCode.java";
+        final String respCodeFile = modulePath+"\\provider\\src\\main\\java\\com\\zscmp\\enums\\RespCode.java";
         Properties properties =loadPropertiesFile(i18nFile);
 
         Map<String, Map<String, String>> map = new HashMap<>();
