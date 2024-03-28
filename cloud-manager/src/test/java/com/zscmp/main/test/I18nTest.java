@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -238,7 +239,7 @@ public class I18nTest {
                     public void visit(StringLiteralExpr n, Void arg) {
                         super.visit(n, arg);
 
-                        if (n.getValue().contains("metricData.cpu_util")) {
+                        if (n.getValue().contains("CheckUtil.check")) {
                             log.info("已使用, file {} at line {}", javaClassName,n.getRange().map(r -> r.begin.line).orElse(-1));
                         }
 
@@ -254,11 +255,11 @@ public class I18nTest {
     }
 
     @Test
-    public void functionUseInfo() {
+    public void checkUtilFunctionUseInfo() {
         Path startPath = Paths.get("D:\\work_space\\cmp-tool\\maintenance-server"); // 指定你要遍历的目录路径
         JavaFileVisitor visitor = new JavaFileVisitor();
 
-        final String targetMethodCall = "MessageSourceHelper#getMessage";
+        final String targetMethodCall = "CheckUtil#check";
 
         try {
             Files.walkFileTree(startPath, visitor);
@@ -281,15 +282,26 @@ public class I18nTest {
 
                         Expression scope = method.getScope().orElse(null);
                         String methCall = String.format("%s#%s", scope==null?"":scope.toString(),method.getName().getIdentifier());
+                        List<Expression> arguments = method.getArguments();
                         if (methCall.equalsIgnoreCase(targetMethodCall)) {
 
-                            Expression argExpr = method.getArguments().get(0);
-                            if (!argExpr.isFieldAccessExpr() || !argExpr.asFieldAccessExpr().toString().startsWith("ConstI18nKey.")) {
+                            if (arguments.size() >= 3 && arguments.get(2).isStringLiteralExpr()) {
 
-                                List<String> dd = method.getArguments().stream().map(Node::toString).collect(Collectors.toList());
-
-                                log.info("不合法的 {}({}) {} at line {}",methCall, String.join(",", dd), javaClassName, method.getRange().map(r->r.begin.line).orElse(-1));
+                                String v = arguments.get(2).asStringLiteralExpr().asString();
+                                System.out.println(v);
                             }
+
+                            Expression argExpr = method.getArguments().get(0);
+                            List<String> dd = method.getArguments().stream().map(Node::toString).collect(Collectors.toList());
+
+                            //log.info("{}({}) {} at line {}",methCall, String.join(",", dd), javaClassName, method.getRange().map(r->r.begin.line).orElse(-1));
+
+//                            if (!argExpr.isFieldAccessExpr() || !argExpr.asFieldAccessExpr().toString().startsWith("ConstI18nKey.")) {
+//
+//                                List<String> dd = method.getArguments().stream().map(Node::toString).collect(Collectors.toList());
+//
+//                                log.info("不合法的 {}({}) {} at line {}",methCall, String.join(",", dd), javaClassName, method.getRange().map(r->r.begin.line).orElse(-1));
+//                            }
 
                         }
 
@@ -305,8 +317,40 @@ public class I18nTest {
     }
 
     @Test
-    public void i18nFile() {
-//        loadPropertiesFile("")
+    public void readI18nFile() throws IOException {
+        Properties properties =loadPropertiesFile("D:\\work_space\\cmp-tool\\maintenance-server\\starter\\src\\main\\resources\\i18n\\Messages_zh_CN.properties");
+
+        Map<String, String> map = new HashMap<>();
+        for (String k : properties.stringPropertyNames()) {
+            map.put(k, properties.getProperty(k));
+            log.info("{}={}", k, properties.getProperty(k));
+        }
+
+
+    }
+
+
+    @Test
+    public void respCodeI18n() throws IOException {
+        String filename = "D:\\work_space\\cmp-tool\\maintenance-server\\provider\\src\\main\\java\\com\\zscmp\\maintenance\\enums\\RespCode.java";
+
+        Path filePath = new File(filename).toPath();
+
+        CompilationUnit cu = StaticJavaParser.parse(filePath);
+
+        String enumName = "RespCode";
+
+        EnumDeclaration declaration = cu.getEnumByName(enumName).orElse(null);
+
+        // 文件可能全部被注释了
+        if (declaration == null) {
+            throw new RuntimeException("error");
+        }
+
+
+        declaration.getEntries().forEach(i->{
+            System.out.printf("exception.%s = %s%n", i.getArguments().get(0).toString(), i.getArguments().get(1).toString().replace("\"", ""));
+        });
     }
 
     /**
@@ -386,9 +430,10 @@ public class I18nTest {
     public Properties loadPropertiesFile(String filename) throws IOException {
         Properties properties = new Properties();
         // 使用ClassLoader获取资源的路径，以便从相对于classpath的位置加载
-        String path = getClass().getClassLoader().getResource(filename).getPath();
         // 加载文件
-        properties.load(Files.newInputStream(Paths.get(path)));
+        File file = new File(filename);
+        properties.load(Files.newInputStream(file.toPath()));
         return properties;
     }
+
 }
