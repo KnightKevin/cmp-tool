@@ -308,9 +308,9 @@ public class I18nTest {
     @Test
     public void filterI18nFile() throws Exception {
 
-        final String modulePath = "D:\\work_space\\cmp-tool\\oss-server\\";
+        final String modulePath = "D:\\work_space\\cmp-tool\\operation-server\\";
         final String i18nFile = modulePath+"starter\\src\\main\\resources\\i18n\\Messages_zh_CN.properties";
-        final String respCodeFile = modulePath+"\\provider\\src\\main\\java\\com\\zscmp\\oss\\enums\\RespCode.java";
+        final String respCodeFile = modulePath+"\\provider\\src\\main\\java\\com\\zscmp\\operation\\enums\\RespCode.java";
         Properties properties =loadPropertiesFile(i18nFile);
 
         Map<String, Map<String, String>> map = new HashMap<>();
@@ -329,7 +329,7 @@ public class I18nTest {
         for (String k : properties.stringPropertyNames()) {
 
             if (!k.contains(".")) {
-                throw new RuntimeException("key必须有‘.’");
+                throw new RuntimeException(String.format("key(%s)必须有‘.’", k));
             }
 
             String group = k.split("\\.")[0];
