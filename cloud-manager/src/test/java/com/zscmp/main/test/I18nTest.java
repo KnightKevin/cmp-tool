@@ -261,74 +261,63 @@ public class I18nTest {
     }
 
     @Test
-    public void checkUtilFunctionUseInfo() {
+    public void checkUtilFunctionUseInfo() throws Exception {
         Path startPath = Paths.get("D:\\work_space\\cmp-tool\\maintenance-server"); // 指定你要遍历的目录路径
         JavaFileVisitor visitor = new JavaFileVisitor();
 
         final String targetMethodCall = "CheckUtil#check";
 
-        try {
-            Files.walkFileTree(startPath, visitor);
-            List<Path> javaFiles = visitor.getJavaFiles();
+        Files.walkFileTree(startPath, visitor);
+        List<Path> javaFiles = visitor.getJavaFiles();
 
-            for (Path javaFile : javaFiles) {
+        List<String> params = new ArrayList<>();
 
-                String javaClassName = javaFile.getFileName().toString().replace(".java", "");
+        for (Path javaFile : javaFiles) {
 
-                if (!javaFile.toUri().toString().endsWith(".java")) {
-                    continue;
-                }
+            if (!javaFile.toUri().toString().endsWith(".java")) {
+                continue;
+            }
 
-                CompilationUnit cu = StaticJavaParser.parse(javaFile);
+            CompilationUnit cu = StaticJavaParser.parse(javaFile);
 
-                cu.accept(new VoidVisitorAdapter<Void>() {
-                    @Override
-                    public void visit(MethodCallExpr method, Void arg) {
-                        super.visit(method, arg);
+            cu.accept(new VoidVisitorAdapter<Void>() {
+                @Override
+                public void visit(MethodCallExpr method, Void arg) {
+                    super.visit(method, arg);
 
-                        Expression scope = method.getScope().orElse(null);
-                        String methCall = String.format("%s#%s", scope==null?"":scope.toString(),method.getName().getIdentifier());
-                        List<Expression> arguments = method.getArguments();
-                        if (methCall.equalsIgnoreCase(targetMethodCall)) {
+                    Expression scope = method.getScope().orElse(null);
+                    String methCall = String.format("%s#%s", scope==null?"":scope.toString(),method.getName().getIdentifier());
+                    List<Expression> arguments = method.getArguments();
+                    if (methCall.equalsIgnoreCase(targetMethodCall)) {
 
-                            if (arguments.size() >= 3 && arguments.get(2).isStringLiteralExpr()) {
+                        if (arguments.size() >= 3 && arguments.get(2).isStringLiteralExpr()) {
 
-                                String v = arguments.get(2).asStringLiteralExpr().asString();
-                                System.out.println(v);
-                            }
-
-                            Expression argExpr = method.getArguments().get(0);
-                            List<String> dd = method.getArguments().stream().map(Node::toString).collect(Collectors.toList());
-
-                            //log.info("{}({}) {} at line {}",methCall, String.join(",", dd), javaClassName, method.getRange().map(r->r.begin.line).orElse(-1));
-
-//                            if (!argExpr.isFieldAccessExpr() || !argExpr.asFieldAccessExpr().toString().startsWith("ConstI18nKey.")) {
-//
-//                                List<String> dd = method.getArguments().stream().map(Node::toString).collect(Collectors.toList());
-//
-//                                log.info("不合法的 {}({}) {} at line {}",methCall, String.join(",", dd), javaClassName, method.getRange().map(r->r.begin.line).orElse(-1));
-//                            }
-
+                            String v = arguments.get(2).asStringLiteralExpr().asString();
+                            params.add(v);
                         }
 
                     }
-                }, null);
 
-            }
+                }
+            }, null);
 
-
-        } catch (IOException e) {
-            System.err.println("Error walking through the directory: " + e.getMessage());
         }
     }
 
     @Test
     public void readI18nFile() throws Exception {
-        Properties properties =loadPropertiesFile("D:\\work_space\\cmp-tool\\vm-server\\starter\\src\\main\\resources\\i18n\\Messages_zh_CN.properties");
+
+        final String modulePath = "D:\\work_space\\cmp-tool\\vm-server\\";
+        final String i18nFile = modulePath+"starter\\src\\main\\resources\\i18n\\Messages_zh_CN.properties";
+        Properties properties =loadPropertiesFile(i18nFile);
 
         Map<String, Map<String, String>> map = new HashMap<>();
 
         List<String> ignores = Arrays.asList("action", "preset");
+
+        List<String> validateStringList = getCheckUtilLiteral(modulePath);
+
+        final String validatePrefix = "validate";
 
         for (String k : properties.stringPropertyNames()) {
 
@@ -348,6 +337,22 @@ public class I18nTest {
 
             map.get(group).put(k, properties.getProperty(k));
         }
+
+        // 开始过滤
+        map.forEach((group, items)->{
+            Map<String, String> afterItems = new HashMap<>();
+            if (group.equalsIgnoreCase(validatePrefix)) {
+                items.forEach((k,v)->{
+                    String i18nKey = k.replace(validatePrefix+".", "");
+                    if (validateStringList.contains(i18nKey)) {
+                        afterItems.put(k, v);
+                    }
+                });
+
+                items.clear();
+                items.putAll(afterItems);
+            }
+        });
 
 //        map.forEach((g, i)->{
 //            i.forEach((k,v)->{
@@ -370,6 +375,52 @@ public class I18nTest {
 
         genFile("i18n.ftl", filePath, model);
 
+    }
+
+    private List<String> getCheckUtilLiteral(String dir) throws Exception {
+        Path startPath = Paths.get(dir); // 指定你要遍历的目录路径
+
+        JavaFileVisitor visitor = new JavaFileVisitor();
+
+        final String targetMethodCall = "CheckUtil#check";
+
+        Files.walkFileTree(startPath, visitor);
+        List<Path> javaFiles = visitor.getJavaFiles();
+
+        List<String> params = new ArrayList<>();
+
+        for (Path javaFile : javaFiles) {
+
+            if (!javaFile.toUri().toString().endsWith(".java")) {
+                continue;
+            }
+
+            CompilationUnit cu = StaticJavaParser.parse(javaFile);
+
+            cu.accept(new VoidVisitorAdapter<Void>() {
+                @Override
+                public void visit(MethodCallExpr method, Void arg) {
+                    super.visit(method, arg);
+
+                    Expression scope = method.getScope().orElse(null);
+                    String methCall = String.format("%s#%s", scope==null?"":scope.toString(),method.getName().getIdentifier());
+                    List<Expression> arguments = method.getArguments();
+                    if (methCall.equalsIgnoreCase(targetMethodCall)) {
+
+                        if (arguments.size() >= 3 && arguments.get(2).isStringLiteralExpr()) {
+
+                            String v = arguments.get(2).asStringLiteralExpr().asString();
+                            params.add(v);
+                        }
+
+                    }
+
+                }
+            }, null);
+
+        }
+
+        return params;
     }
 
 
