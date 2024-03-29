@@ -62,6 +62,8 @@ public class I18nTest {
 
         List<String> nonstandardMethod = new ArrayList<>();
 
+        Map<String, List<String>> dddd = new HashMap<>();
+
         try {
             Files.walkFileTree(startPath, visitor);
             List<Path> javaFiles = visitor.getJavaFiles();
@@ -118,9 +120,21 @@ public class I18nTest {
                             }
 
                             actionMap.put(code, value);
-                            log.info("{}={}", code, value);
+                            if (!dddd.containsKey(value)) {
+                                dddd.put(value, new ArrayList<>());
+                            }
+                            dddd.get(value).add(String.format("%s %s", fullClassName, m.getNameAsString()));
+
                 });
             }
+
+
+            Map<String, List<String>> cc = new HashMap();
+            dddd.forEach((k,v)->{
+                if (v.size()>1) {
+                    cc.put(k, v);
+                }
+            });
 
             log.info("总条目数：{}", actionMap.size());
             log.info("不规范的方法定义条目：{}", nonstandardMethod);
