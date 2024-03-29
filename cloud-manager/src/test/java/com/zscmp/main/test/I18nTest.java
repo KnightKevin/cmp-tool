@@ -120,13 +120,22 @@ public class I18nTest {
                             }
 
                             actionMap.put(code, value);
-                            if (!dddd.containsKey(value)) {
-                                dddd.put(value, new ArrayList<>());
-                            }
-                            dddd.get(value).add(String.format("%s %s", fullClassName, m.getNameAsString()));
+//                            if (!dddd.containsKey(value)) {
+//                                dddd.put(value, new ArrayList<>());
+//                            }
+//                            dddd.get(value).add(String.format("%s %s", fullClassName, m.getNameAsString()));
 
                 });
             }
+
+
+
+            actionMap.forEach((k,v)->{
+                if (!dddd.containsKey(v)) {
+                    dddd.put(v, new ArrayList<>());
+                }
+                dddd.get(v).add(k);
+            });
 
 
             Map<String, List<String>> cc = new HashMap();
