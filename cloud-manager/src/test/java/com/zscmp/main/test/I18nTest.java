@@ -3,6 +3,7 @@ package com.zscmp.main.test;
 //import com.zscmp.common.annotation.ActionKey;
 //import io.swagger.annotations.ApiOperation;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -242,6 +243,7 @@ public class I18nTest {
             }
 
 
+            log.info("{}", JSONObject.toJSON(actionMap));
 
             log.info("总条目数：{}", actionMap.size());
             log.info("不规范的方法定义条目：{}", nonstandardMethod);
