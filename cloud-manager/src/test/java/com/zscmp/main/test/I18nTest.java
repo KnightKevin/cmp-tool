@@ -8,6 +8,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MemberValuePair;
@@ -48,6 +49,16 @@ public class I18nTest {
     private static final String ActionKey = "ActionKey";
 
     private static final String ApiOperation = "ApiOperation";
+
+
+    private static final String GetMapping = "GetMapping";
+    private static final String PostMapping = "PostMapping";
+    private static final String PutMapping = "PutMapping";
+    private static final String DeleteMapping = "DeleteMapping";
+    private static final String RequestMapping = "RequestMapping";
+
+
+
     private static final String ACTION_KEY_CODE = "code";
 
     @Autowired
@@ -151,6 +162,155 @@ public class I18nTest {
         } catch (IOException e) {
             System.err.println("Error walking through the directory: " + e.getMessage());
         }
+    }
+
+
+    @Test
+    public void actionRouteTest() {
+        Path startPath = Paths.get("D:\\work_space\\cmp-tool"); // 指定你要遍历的目录路径
+        JavaFileVisitor visitor = new JavaFileVisitor();
+
+        Map<String, List<String>> actionMap = new HashMap<>();
+
+        List<String> nonstandardMethod = new ArrayList<>();
+
+
+        try {
+            Files.walkFileTree(startPath, visitor);
+            List<Path> javaFiles = visitor.getJavaFiles();
+
+
+            // 操作条目数
+            AtomicInteger n = new AtomicInteger();
+
+            for (Path javaFile : javaFiles) {
+
+                String javaClassName = javaFile.getFileName().toString().replace(".java", "");
+
+                if (!javaFile.getFileName().toString().contains("Controller")) {
+                    continue;
+                }
+
+                CompilationUnit cu = StaticJavaParser.parse(javaFile);
+
+                ClassOrInterfaceDeclaration classDeclaration = cu.getClassByName(javaClassName).orElse(null);
+
+                // 文件可能全部被注释了
+                if (classDeclaration == null) {
+                    continue;
+                }
+
+                String fullClassName = classDeclaration.getFullyQualifiedName().get();
+
+
+                String baseUrl = getBaseUrl(cu);
+                String serverName = getServerName(cu);
+
+                cu.findAll(MethodDeclaration.class).stream()
+                        .filter(NodeWithPublicModifier::isPublic)
+                        .forEach(m->{
+
+                            String code = "";
+
+                            String value = "";
+
+                            if (!m.isAnnotationPresent(ActionKey)) {
+                                return;
+                            }
+                            n.getAndIncrement();
+                            Optional<AnnotationExpr> optional = m.getAnnotationByName(ActionKey);
+
+                            AnnotationExpr annotationExpr = optional.get();
+                            code = getAnnotationValueByName(ACTION_KEY_CODE, annotationExpr);
+
+                            if (m.isAnnotationPresent(ApiOperation)) {
+
+                                optional = m.getAnnotationByName(ApiOperation);
+
+                                annotationExpr = optional.get();
+                                value = getAnnotationValueByName("value", annotationExpr);
+
+                            } else {
+                                nonstandardMethod.add(fullClassName+"#"+m.getNameAsString());
+                            }
+
+                            String mapUrl = getMappingUrl(m);
+
+                            actionMap.computeIfAbsent(code, k->new ArrayList<>()).add("/"+serverName+baseUrl+getMappingUrl(m));
+
+                        });
+            }
+
+
+
+            log.info("总条目数：{}", actionMap.size());
+            log.info("不规范的方法定义条目：{}", nonstandardMethod);
+
+        } catch (IOException e) {
+            System.err.println("Error walking through the directory: " + e.getMessage());
+        }
+    }
+
+    private String getServerName(CompilationUnit cu) {
+        String packageName = cu.getPackageDeclaration().get().getNameAsString();
+
+        return packageName.split("\\.")[2];
+    }
+
+    private String getBaseUrl(CompilationUnit cu) {
+
+        String baseUrl = "";
+
+        for (TypeDeclaration<?> typeDeclaration : cu.getTypes()) {
+            ClassOrInterfaceDeclaration classDeclaration = (ClassOrInterfaceDeclaration) typeDeclaration;
+            // 获取类名
+            String className = classDeclaration.getNameAsString();
+            // 获取类上的注解
+            List<AnnotationExpr> annotations = classDeclaration.getAnnotations();
+            for (AnnotationExpr annotation : annotations) {
+                // 检查注解是否是你想要的注解
+                if ("RequestMapping".equals(annotation.getNameAsString())) {
+                    // 处理找到的注解
+                    System.out.println("Found annotation on class " + className + ": " + annotation);
+                    baseUrl = getAnnotationValueByName("value", annotation);
+                    break;
+                }
+            }
+        }
+
+        return baseUrl;
+    }
+
+    private String getMappingUrl(MethodDeclaration m) {
+        String url = "";
+        if (m.isAnnotationPresent(GetMapping)) {
+            AnnotationExpr expr = m.getAnnotationByName(GetMapping).get();
+            url = getAnnotationValueByName("value", expr);
+        }
+
+        if (m.isAnnotationPresent(PostMapping)) {
+            AnnotationExpr expr = m.getAnnotationByName(PostMapping).get();
+            url = getAnnotationValueByName("value", expr);
+        }
+
+        if (m.isAnnotationPresent(PutMapping)) {
+            AnnotationExpr expr = m.getAnnotationByName(PutMapping).get();
+            url = getAnnotationValueByName("value", expr);
+        }
+
+        if (m.isAnnotationPresent(DeleteMapping)) {
+            AnnotationExpr expr = m.getAnnotationByName(DeleteMapping).get();
+            url = getAnnotationValueByName("value", expr);
+        }
+
+        if (m.isAnnotationPresent(RequestMapping)) {
+            AnnotationExpr expr = m.getAnnotationByName(RequestMapping).get();
+            url = getAnnotationValueByName("value", expr);
+        }
+
+
+
+        return url;
     }
 
     @Test
@@ -562,7 +722,9 @@ public class I18nTest {
 
         if (annotationExpr.isSingleMemberAnnotationExpr()) {
             return annotationExpr.asSingleMemberAnnotationExpr().getMemberValue().asStringLiteralExpr().getValue();
-        } else {
+        } if (annotationExpr.isMarkerAnnotationExpr()) {
+            return "";
+        }else {
             for (MemberValuePair pair : annotationExpr.asNormalAnnotationExpr().getPairs()) {
 
                 if (pair.getNameAsString().equals(fieldName)) {
