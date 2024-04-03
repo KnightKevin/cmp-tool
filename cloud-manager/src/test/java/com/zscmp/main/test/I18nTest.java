@@ -17,6 +17,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.nodeTypes.modifiers.NodeWithPublicModifier;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.zscmp.cloud.manager.Dd;
 import com.zscmp.cloud.manager.JavaFileVisitor;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -171,7 +172,7 @@ public class I18nTest {
         Path startPath = Paths.get("D:\\work_space\\cmp-tool"); // 指定你要遍历的目录路径
         JavaFileVisitor visitor = new JavaFileVisitor();
 
-        Map<String, List<String>> actionMap = new HashMap<>();
+        Map<String, Dd> actionMap = new HashMap<>();
 
         List<String> nonstandardMethod = new ArrayList<>();
 
@@ -237,8 +238,12 @@ public class I18nTest {
 
                             String mapUrl = getMappingUrl(m);
 
-                            actionMap.computeIfAbsent(code, k->new ArrayList<>()).add("/"+serverName+baseUrl+getMappingUrl(m));
+                            if (!actionMap.containsKey(code)) {
+                                actionMap.put(code, new Dd());
+                            }
 
+                            actionMap.get(code).setCn(value);
+                            actionMap.get(code).getUrl().add("/"+serverName+baseUrl+mapUrl);
                         });
             }
 
