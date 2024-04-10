@@ -5,7 +5,7 @@ cd ./
 
 # 遍历所有文件夹（每个文件夹都是一个 Git 仓库）
 for repo in */; do
-      if [ "$repo" == "logs/" ]; then
+      if [ "$repo" == "logs/" ] || [ "$repo" == "cloud-manager/" ]; then
             echo "Skipping $repo..."
             continue
       fi
