@@ -1,0 +1,9 @@
+FROM openjdk:8
+
+ADD ./tar/zscmp-mc.jar app.jar
+
+# 修改容器内的时区
+RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo "Asia/Shanghai" > /etc/timezone
+
+# 各个参数按情况可自行修改
+ENTRYPOINT ["java","-Xms128m", "-Xmx512m","-jar","-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5007","/app.jar","--db.password=password"]

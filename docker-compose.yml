@@ -1,0 +1,209 @@
+# cmp用docker部署的配置
+version: "3.9"
+services:
+  base:
+    container_name: base
+    mem_limit: 1G
+    build:
+      context: .
+      dockerfile: Dockerfile-base
+    network_mode: "host"
+    volumes:
+      - /usr/local/zstack-cmp:/usr/local/zstack-cmp
+      - /root/mariadb-rabbitmq-redis/cmp-cloud:/usr/local/zstack-cmp/code
+      - /sbin/dmidecode:/sbin/dmidecode
+      - /dev/mem:/dev/me
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8101/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+    depends_on:
+      - mariadb
+      - rabbitmq
+      - redis
+      - nacos
+
+  mc:
+    container_name: mc
+    mem_limit: 1G
+    build:
+      context: .
+      dockerfile: Dockerfile-mc
+    network_mode: "host"
+    depends_on:
+      vm:
+        condition: service_healthy
+  
+  vm:
+    container_name: vm
+    mem_limit: 1G
+    build:
+      context: .
+      dockerfile: Dockerfile-vm
+    network_mode: "host"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8101/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+    depends_on:
+      base:
+        condition: service_healthy
+
+  oss:
+    container_name: oss
+    mem_limit: 1G
+    build:
+      context: .
+      dockerfile: Dockerfile-oss
+    network_mode: "host"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8101/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+    depends_on:
+      base:
+        condition: service_healthy
+
+  rds:
+    container_name: rds
+    mem_limit: 1G
+    build:
+      context: .
+      dockerfile: Dockerfile-rds
+    network_mode: "host"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8101/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+    depends_on:
+      base:
+        condition: service_healthy
+        
+  connector:
+    container_name: connector
+    mem_limit: 1G
+    build:
+      context: .
+      dockerfile: Dockerfile-connector
+    network_mode: "host"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8102/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+    depends_on:
+      base:
+        condition: service_healthy
+
+  operation:
+    container_name: operation
+    mem_limit: 1G
+    build:
+      context: .
+      dockerfile: Dockerfile-operation
+    network_mode: "host"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8102/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+    depends_on:
+      base:
+        condition: service_healthy
+
+  ticket:
+    container_name: ticket
+    mem_limit: 1G
+    build:
+      context: .
+      dockerfile: Dockerfile-ticket
+    network_mode: "host"
+    depends_on:
+      base:
+        condition: service_healthy
+
+  portal:
+    container_name: portal
+    mem_limit: 1G
+    build:
+      context: .
+      dockerfile: Dockerfile-portal
+    network_mode: "host"
+    volumes:
+      - /usr/local/zstack-cmp/upload:/usr/local/zstack-cmp/upload
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8101/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+    depends_on:
+      - mariadb
+      - rabbitmq
+      - redis
+
+  gateway:
+    container_name: gateway
+    mem_limit: 1G
+    build:
+      context: .
+      dockerfile: Dockerfile-gateway
+    network_mode: "host"
+
+  mariadb:
+    container_name: mariadb
+    image: mariadb:10.8.2
+    environment:
+      MARIADB_ROOT_PASSWORD: password
+    network_mode: "host"
+  # mariadb2:
+  #   container_name: mariadb2
+  #   image: mariadb:10.8.2
+  #   environment:
+  #     MARIADB_ROOT_PASSWORD: password
+  #   ports:
+  #     - "3305:3306"  
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management-alpine
+    network_mode: "host"
+  # rabbitmq2:
+  #   container_name: rabbitmq2
+  #   image: rabbitmq:management-alpine
+  #   network_mode: "host"
+  #   hostname: rabbitmq1
+  #   environment:
+  #     RABBITMQ_ERLANG_COOKIE: rabbitcookie
+  #     RABBITMQ_NODENAME: rabbit@rabbitmq1
+
+
+
+  # rabbitmq2:
+  #   container_name: rabbitmq2
+  #   image: rabbitmq:management-alpine
+  #   ports:
+  #     - "15673:15672"
+  #     - "5673:5672"
+  redis:
+    container_name: redis
+    image: redis:latest
+    command: redis-server /usr/local/etc/redis/redis.conf
+    network_mode: "host"
+    volumes:
+      - /root/cmp-smg/config/redis.conf:/usr/local/etc/redis/redis.conf
+
+  nacos:
+    container_name: nacos
+    image: nacos/nacos-server:v2.2.3
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8848/nacos/v1/console/health/readiness"]
+      start_period: 60s
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    network_mode: "host"
+    environment:
+      - MODE=standalone
