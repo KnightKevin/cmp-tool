@@ -12,7 +12,6 @@
 
 
     <modules>
-        <module>cloud-manager</module>
         <module>basic-libs</module>
         <module>base-server</module>
         <module>gateway-server</module>
