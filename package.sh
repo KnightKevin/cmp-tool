@@ -13,6 +13,15 @@ dockerComposeCmd="docker-compose up --remove-orphans --build -d"
 
 ## 函数定义
 cpCmd() {
+
+  dir = "tar"
+  # 检查目录是否存在
+  if [ ! -d "$dir" ]; then
+      echo "目录不存在，正在创建..."
+      mkdir -p "$dir"
+      echo "目录创建成功！"
+  fi
+
 	if [ "$1" = "gateway" ]; then
 		cp -f $baseDir/$module-server/target/zscmp-gateway.jar ./tar/zscmp-gateway.jar
 	elif [ "$1" = "maintenance" ];then
