@@ -47,8 +47,8 @@ if [ $# -gt 0 ]; then
 	cpCmd $module
 
 	# 执行docker-compose命令
-	echo "执行：$dockerComposeCmd $module-server"
-	$dockerComposeCmd $module-server
+	echo "执行：$dockerComposeCmd $module"
+	$dockerComposeCmd $module
 
 else
     for module in "${modules[@]}"; do
