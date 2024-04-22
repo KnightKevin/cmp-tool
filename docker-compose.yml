@@ -95,6 +95,8 @@ services:
       interval: 10s
       timeout: 3s
       retries: 12
+    volumes:
+      - /etc/hosts:/etc/hosts
     depends_on:
       base:
         condition: service_healthy
