@@ -19,8 +19,10 @@ import com.github.javaparser.ast.nodeTypes.modifiers.NodeWithPublicModifier;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.zscmp.cloud.manager.Dd;
 import com.zscmp.cloud.manager.JavaFileVisitor;
+import com.zscmp.cloud.manager.model.Module;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -573,6 +575,29 @@ public class I18nTest {
 
     }
 
+
+    @Test
+    public void nginx() throws Exception {
+        List<Module> list = Arrays.asList(
+                new Module("gateway", "8100"),
+                new Module("base", "8101"),
+                new Module("connector", "8102"),
+                new Module("mc", "8110"),
+                new Module("operation", "8111"),
+                new Module("oss", "8122"),
+                new Module("portal", "8199"),
+                new Module("rds", "8121"),
+                new Module("ticket", "8123"),
+                new Module("vm", "8120")
+        );
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", list);
+        String s = genFreeMarkString("nginx.ftl", map);
+
+        System.out.println(s);
+    }
+
     private List<String> getCheckUtilLiteral(String dir) throws Exception {
         Path startPath = Paths.get(dir); // 指定你要遍历的目录路径
 
@@ -753,12 +778,18 @@ public class I18nTest {
     }
 
     private void genFile(String ftl, String f, Map<String, Object> m) throws Exception {
+        String s = genFreeMarkString(ftl, m);
+        writeStringToFile(s, f);
+    }
+
+    private String genFreeMarkString(String ftl, Map<String, Object> m) throws Exception {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
         String resourcePath = getClass().getClassLoader().getResource("templates").getPath();
         cfg.setDirectoryForTemplateLoading(new File(resourcePath));
         Template template = cfg.getTemplate(ftl);
         String s = FreeMarkerTemplateUtils.processTemplateIntoString(template, m);
-        writeStringToFile(s, f);
+
+        return s;
     }
 
     private void deleteDir(String baseDir) throws Exception {
