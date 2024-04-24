@@ -3,7 +3,7 @@
 # 自动获取前端文件然后解压到目标目录
 
 # 目标文件夹（自己配）
-target_folder="C:\cmp-upload-files\ui"
+target_folder="/usr/local/zstack-cmp/upload/ui"
 
 
 
