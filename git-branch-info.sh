@@ -12,6 +12,12 @@ for file in *; do
         # 进入目录
         cd "$file"
 
+        if [ ! -d ".git" ]; then
+            echo "Skipping $file..."
+            cd ..
+            continue
+        fi
+
         # 获取Git分支名称
         branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
