@@ -10,7 +10,7 @@ services:
     network_mode: "host"
     volumes:
       - /usr/local/zstack-cmp:/usr/local/zstack-cmp
-      - /root/mariadb-rabbitmq-redis/cmp-cloud:/usr/local/zstack-cmp/code
+      - /root/cmp:/usr/local/zstack-cmp/upload/sourceCode
       - /sbin/dmidecode:/sbin/dmidecode
       - /dev/mem:/dev/me
     healthcheck:
