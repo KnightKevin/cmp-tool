@@ -1,5 +1,27 @@
 package com.zscmp.main.test;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.util.StringUtils;
+
 //import com.zscmp.common.annotation.ActionKey;
 //import io.swagger.annotations.ApiOperation;
 
@@ -17,34 +39,12 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.nodeTypes.modifiers.NodeWithPublicModifier;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.zscmp.cloud.manager.Dd;
-import com.zscmp.cloud.manager.JavaFileVisitor;
-import com.zscmp.cloud.manager.model.Module;
+import com.zscmp.main.app.JavaFileVisitor;
+
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.util.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Slf4j
@@ -70,7 +70,7 @@ public class I18nTest {
 
     @Test
     public void actionI18nTest() {
-        Path startPath = Paths.get("D:\\work_space\\cmp-tool"); // 指定你要遍历的目录路径
+        Path startPath = Paths.get("/root/cmp"); // 指定你要遍历的目录路径
         JavaFileVisitor visitor = new JavaFileVisitor();
 
         Map<String, String> actionMap = new HashMap<>();
@@ -106,6 +106,9 @@ public class I18nTest {
 
                 String fullClassName = classDeclaration.getFullyQualifiedName().get();
 
+
+                
+
                 cu.findAll(MethodDeclaration.class).stream()
                         .filter(NodeWithPublicModifier::isPublic)
                         .forEach(m->{
@@ -123,45 +126,15 @@ public class I18nTest {
                             AnnotationExpr annotationExpr = optional.get();
                             code = getAnnotationValueByName(ACTION_KEY_CODE, annotationExpr);
 
-                            if (m.isAnnotationPresent(ApiOperation)) {
-
-                                optional = m.getAnnotationByName(ApiOperation);
-
-                                annotationExpr = optional.get();
-                                value = getAnnotationValueByName("value", annotationExpr);
-
-                            } else {
-                                nonstandardMethod.add(fullClassName+"#"+m.getNameAsString());
+                            if (m.isAnnotationPresent(ApiOperation) && m.isAnnotationPresent("GetMapping")) {
+                                log.info("{}#{}", fullClassName, m.getNameAsString());
                             }
 
                             actionMap.put(code, value);
-//                            if (!dddd.containsKey(value)) {
-//                                dddd.put(value, new ArrayList<>());
-//                            }
-//                            dddd.get(value).add(String.format("%s %s", fullClassName, m.getNameAsString()));
 
                 });
             }
 
-
-
-            actionMap.forEach((k,v)->{
-                if (!dddd.containsKey(v)) {
-                    dddd.put(v, new ArrayList<>());
-                }
-                dddd.get(v).add(k);
-            });
-
-
-            Map<String, List<String>> cc = new HashMap();
-            dddd.forEach((k,v)->{
-                if (v.size()>1) {
-                    cc.put(k, v);
-                }
-            });
-
-            log.info("总条目数：{}", actionMap.size());
-            log.info("不规范的方法定义条目：{}", nonstandardMethod);
 
         } catch (IOException e) {
             System.err.println("Error walking through the directory: " + e.getMessage());

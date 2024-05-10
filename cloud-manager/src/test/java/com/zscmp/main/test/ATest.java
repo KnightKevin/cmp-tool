@@ -1,18 +1,19 @@
 package com.zscmp.main.test;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import javax.swing.RowFilter.Entry;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.JSONObject;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -20,64 +21,26 @@ import lombok.extern.slf4j.Slf4j;
 public class ATest {
 
     @Test
-    public void aTest() {
-        log.info(JSON.toJSONString(new InputParams(), SerializerFeature.WriteMapNullValue));
-    }
+    public void aTest() throws IOException {
+        // 读取JSON文件
+        ClassPathResource resource = new ClassPathResource("json.json");
+        byte[] jsonBytes = FileCopyUtils.copyToByteArray(resource.getInputStream());
+        String jsonString = new String(jsonBytes, StandardCharsets.UTF_8);
 
-    
-   
-    @Setter
-    @Getter
-    public static class InputParams {
-        private String userId;
-        private String accountId;
-        private String resourceType = "VM";
-        private List<WorkOrderItem> workOrderItems = Arrays.asList(new WorkOrderItem());
+        JSONObject json = JSONObject.parseObject(jsonString);
 
-        // @Getter
-        // @Setter
-        // public static class Nics {
-        //     String vpcId;
-        //     String subnetId;
-        //     String fixedIp;
-        // }
+        for (Map.Entry<String, Object> entry: json.entrySet()) {
+            String k = entry.getKey();
+            String v = (String) entry.getValue();
 
-        // @Getter
-        // @Setter
-        // public static class Disk {
-        //     String volumeType;
-        //     Long size;
-        // }
+            if (Pattern.compile("[a-zA-Z]").matcher(v).find()) {
+                if (v.toLowerCase().contains("rds")) {
+                    log.info("k='{}' v= {}", k, v);
+                }
+            }
+        }
 
-     
-    }
 
-    @Data
-    public static class WorkOrderItem {
-        private WorkOrderItemConfig workOrderItemConfig = new WorkOrderItemConfig();
-    }
-
-    @Data
-    public static class WorkOrderItemConfig {
-        // private String platformId;
-        private String vmName;
-        private String originInstanceUuid;
-        private List<Network> networks = Arrays.asList(new Network());
-        private String rootPassword;
-        private int cycleCnt;
-        private int cycleType;
-        private String acctItemClass;
-    }
-
-    @Data
-    private static class Network {
-        List<CtFixedIp> ct_fixed_ips = Arrays.asList(new CtFixedIp());
-        private String uuid;
-    }
-
-    @Data
-    private static class CtFixedIp {
-        private String subnetId;
     }
 
 }
