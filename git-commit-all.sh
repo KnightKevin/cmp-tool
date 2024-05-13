@@ -3,6 +3,8 @@
 # 默认提交消息
 commit_message="Auto commit"
 
+commitedDirs=()
+
 # 获取当前目录
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -24,18 +26,42 @@ for folder in "$DIR"/*; do
         cd "$folder" || exit
 
         # 检查文件夹是否是一个Git项目
-        if [ -d ".git" ]; then
-            echo "Processing $(basename "$folder")..."
-
-            git add .
-            # 运行提交脚本，传递参数m
-            git commit -m "$commit_message"
-
-            git pull --rebase
-
-            git push
-
-            echo "Done."
+        if [ ! -d ".git" ]; then
+          continue
         fi
+
+        # 检查是否存在提交
+        if [[ ! $(git status --porcelain) ]]; then
+          continue
+        fi
+
+        echo "Processing $(basename "$folder")..."
+
+
+        git add .
+        # 运行提交脚本，传递参数m
+        git commit -m "$commit_message"
+
+        # 获取到commit id
+        commit_id=$(git rev-parse HEAD)
+
+        git pull --rebase
+
+        git push
+
+
+        commitedDirs+=("$folder $commit_id")
+
+        echo "Done."
     fi
+done
+
+
+
+# final message:
+# above git project commit:
+echo "############### result #################"
+echo "The following directories execute 'git commit'"
+for ((i=0; i<${#commitedDirs[@]}; i++)); do
+    echo -e "\e[0;36m${commitedDirs[$i]}\e[0m"
 done
