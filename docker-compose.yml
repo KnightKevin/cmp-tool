@@ -3,7 +3,8 @@ version: "3.9"
 services:
   base:
     container_name: base
-    mem_limit: 1G
+    mem_limit: 2G
+    cpus: 4
     build:
       context: .
       dockerfile: Dockerfile-base
@@ -37,7 +38,8 @@ services:
   
   vm:
     container_name: vm
-    mem_limit: 1G
+    mem_limit: 2G
+    cpus: 4
     build:
       context: .
       dockerfile: Dockerfile-vm
@@ -69,7 +71,7 @@ services:
 
   rds:
     container_name: rds
-    mem_limit: 1G
+    mem_limit: 2G
     build:
       context: .
       dockerfile: Dockerfile-rds
