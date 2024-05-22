@@ -160,6 +160,8 @@ services:
   mariadb:
     container_name: mariadb
     image: mariadb:10.8.2
+    volumes:
+      - ./config/mariadb/my.cnf:/etc/mysql/my.cnf
     environment:
       MARIADB_ROOT_PASSWORD: password
     network_mode: "host"
