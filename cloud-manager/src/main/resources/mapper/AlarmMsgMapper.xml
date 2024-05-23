@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zscmp.main.app.mybatis.AlarmMsgMapper">
+
+    <!--批量新增-->
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into alarm_msg (`uuid`,`cloud_account_id`,`name`,`level`,`content`,`read_status`,`resource_id`,`resource_type`,`resource_name`,`expr`,`vdc_id`,`cloud_type`,`alarm_date`,`create_date`,`update_date`)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+        (#{item.uuid},#{item.cloudAccountId},#{item.name},#{item.level},#{item.content},#{item.readStatus},#{item.resourceId},#{item.resourceType},#{item.resourceName},#{item.expr},#{item.vdcId},#{item.cloudType},#{item.alarmDate},#{item.createDate},#{item.updateDate})
+        </foreach>
+    </insert>
+</mapper>
