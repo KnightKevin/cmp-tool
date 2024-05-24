@@ -39,6 +39,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.nodeTypes.modifiers.NodeWithPublicModifier;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.zscmp.main.app.CommonRespCode;
 import com.zscmp.main.app.JavaFileVisitor;
 
 import freemarker.template.Configuration;
@@ -548,6 +549,31 @@ public class I18nTest {
 
     }
 
+
+    @Test
+    public void exceptionCodeI18n() throws Exception {
+
+        Map<String, Map<String, String>> map = new HashMap<>();
+        Map<String, Object> model = new HashMap<>();
+
+        Map<String, String> kv = new HashMap<>();
+       for (CommonRespCode i : CommonRespCode.values()) {
+            kv.put("exception."+i.getCode(), i.getMsg());
+       }
+       map.put("exception", kv);
+
+        model.put("map", map);
+
+
+        final String baseDir = "target/gen/";
+        final String filePath = baseDir+"Messages_en_CN.properties";
+
+        deleteDir(baseDir);
+
+        Files.createDirectories(Paths.get(baseDir));
+
+        genFile("i18n.ftl", filePath, model);
+    }
 
     @Test
     public void nginx() throws Exception {
