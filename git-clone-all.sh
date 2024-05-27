@@ -7,17 +7,15 @@ repository_url="ssh://git@dev.zstack.io:9022/zstackio/cmp-server.git"
 
 # 分支列表
 branches=(
-    "basic-libs"
-    "base-server"
-    "gateway-server" 
-    "connector-server"
-    "maintenance-server"
-    "operation-server"
-    "vm-server"
-    "rds-server"
-    "oss-server"
-    "ticket-server"
-    "portal-server"
+    "basic-libs-smg"
+    "base-smg"
+    "gateway-smg" 
+    "connector-smg"
+    "maintenance-smg"
+    "operation-smg"
+    "vm-smg"
+    "ticket-smg"
+    "portal-smg"
     )
 
 # 目标文件夹

@@ -4,7 +4,7 @@
 baseDir="."
 
 # 须要参与docker-compose的模块
-modules=("gateway" "connector" "portal" "base" "vm" "rds" "oss" "operation" "ticket" "maintenance")
+modules=("gateway" "connector" "portal" "base" "vm" "operation" "ticket" "maintenance")
 
 # 可能指定的模块
 module=$1
@@ -24,11 +24,11 @@ cpCmd() {
   fi
 
 	if [ "$1" = "gateway" ]; then
-		cp -f $baseDir/$module-server/target/zscmp-gateway.jar ./tar/zscmp-gateway.jar
+		cp -f $baseDir/$module-smg/target/zscmp-gateway.jar ./tar/zscmp-gateway.jar
 	elif [ "$1" = "maintenance" ];then
-		cp -f $baseDir/$module-server/starter/target/zscmp-mc.jar ./tar/zscmp-mc.jar
+		cp -f $baseDir/$module-smg/starter/target/zscmp-mc.jar ./tar/zscmp-mc.jar
 	else
-		cp -f $baseDir/$module-server/starter/target/zscmp-$module.jar ./tar/zscmp-$module.jar
+		cp -f $baseDir/$module-smg/starter/target/zscmp-$module.jar ./tar/zscmp-$module.jar
 	fi
 }
 

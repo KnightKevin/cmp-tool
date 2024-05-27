@@ -12,17 +12,15 @@
 
 
     <modules>
-        <module>basic-libs</module>
-        <module>base-server</module>
-        <module>gateway-server</module>
-        <module>maintenance-server</module>
-        <module>connector-server</module>
-        <module>operation-server</module>
-        <module>vm-server</module>
-        <module>rds-server</module>
-        <module>oss-server</module>
-        <module>ticket-server</module>
-        <module>portal-server</module>
+        <module>basic-libs-smg</module>
+        <module>base-smg</module>
+        <module>gateway-smg</module>
+        <module>connector-smg</module>
+        <module>maintenance-smg</module>
+        <module>operation-smg</module>
+        <module>vm-smg</module>
+        <module>ticket-smg</module>
+        <module>portal-smg</module>
     </modules>
 
     <!-- 构建配置 -->

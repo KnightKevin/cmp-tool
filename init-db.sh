@@ -22,7 +22,7 @@ DATABASES=(
 # 创建数据库函数
 create_database() {
     local db_name=$1
-    docker exec -it "$DOCKER_CONTAINER" mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS $db_name;"
+    docker compose exec -it "$DOCKER_CONTAINER" mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS $db_name;"
     echo "数据库 $db_name 创建完成"
 }
 

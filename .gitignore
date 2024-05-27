@@ -5,6 +5,7 @@
 target
 logs
 *-server
+*-smg
 basic-libs
 cloud
 tar
