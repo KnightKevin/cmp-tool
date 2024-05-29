@@ -132,6 +132,13 @@ public class GenerateCodeTest {
     @Test
     public void genCode() throws Exception {
 
+        String t = """
+                {
+                    asdfasdfasdfasdf
+                }
+                """;
+        
+        log.info("dadsdfas {}", t);
         final String tableName = "alarm_msg_user";
 
         final String className = toCamelCase(tableName);
