@@ -14,6 +14,7 @@ import org.springframework.util.FileCopyUtils;
 
 import com.alibaba.fastjson.JSONObject;
 
+
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -36,11 +37,12 @@ public class ATest {
             if (Pattern.compile("[a-zA-Z]").matcher(v).find()) {
                 if (v.toLowerCase().contains("rds")) {
                     log.info("k='{}' v= {}", k, v);
+
                 }
             }
         }
 
-
     }
 
 }
+
