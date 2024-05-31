@@ -199,7 +199,7 @@ services:
     command: redis-server /usr/local/etc/redis/redis.conf
     network_mode: "host"
     volumes:
-      - /root/cmp-smg/config/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./config/redis/redis.conf:/usr/local/etc/redis/redis.conf
 
   nacos:
     container_name: nacos
