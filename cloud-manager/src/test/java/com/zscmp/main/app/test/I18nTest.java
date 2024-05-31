@@ -2,19 +2,28 @@ package com.zscmp.main.app.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -236,6 +245,64 @@ public class I18nTest {
             System.err.println("Error walking through the directory: " + e.getMessage());
         }
     }
+
+    @Test
+    public void dDTest() throws Exception {
+        String password = encrypt("BX917384adye", 123456);
+
+        log.info("password {}", password);
+    }
+
+    private static final String PREFIX_KEY = "sangfor-sip-mirror";
+    private static final String CBC_IV = "wxOrNUndoP2msYph";
+
+    public String getSecretKey(int rand) throws NoSuchAlgorithmException {
+        String randStr = String.valueOf(rand);
+        String base = Base64.getEncoder().encodeToString(randStr.getBytes(StandardCharsets.UTF_8));
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hash = digest.digest(base.getBytes(StandardCharsets.UTF_8));
+        StringBuilder secretkey = new StringBuilder();
+        for (byte b : hash) {
+            secretkey.append(String.format("%02x", b));
+        }
+        return secretkey.substring(0, 14) + PREFIX_KEY;
+    }
+
+    public String encrypt(String text, int rand) throws Exception {
+        MessageDigest sha1Digest = MessageDigest.getInstance("SHA-1");
+        byte[] textHash = sha1Digest.digest(text.getBytes(StandardCharsets.UTF_8));
+        StringBuilder textHashStr = new StringBuilder();
+        for (byte b : textHash) {
+            textHashStr.append(String.format("%02x", b));
+        }
+        String textToEncrypt = textHashStr.toString() + PREFIX_KEY;
+
+        int nowSize = textToEncrypt.length();
+        if (nowSize % 16 != 0) {
+            int extraSize = (nowSize / 16 + 2) * 16 - nowSize;
+            StringBuilder extraChars = new StringBuilder(extraSize);
+            Random random = new Random();
+            String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            for (int i = 0; i < extraSize; i++) {
+                extraChars.append(chars.charAt(random.nextInt(chars.length())));
+            }
+            textToEncrypt += extraChars.toString();
+        }
+
+        String key = getSecretKey(rand);
+
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
+        IvParameterSpec ivSpec = new IvParameterSpec(CBC_IV.getBytes(StandardCharsets.UTF_8));
+        cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
+
+        byte[] encrypted = cipher.doFinal(textToEncrypt.getBytes(StandardCharsets.UTF_8));
+        String encryptedBase64 = Base64.getEncoder().encodeToString(encrypted);
+
+        return encryptedBase64;
+    }
+
+
 
     private String getServerName(CompilationUnit cu) {
         String packageName = cu.getPackageDeclaration().get().getNameAsString();
