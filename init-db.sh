@@ -19,6 +19,13 @@ DATABASES=(
 "zscmp_vm"
 )
 
+
+initFlag=$(docker exec -it "$DOCKER_CONTAINER" mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "SHOW DATABASES LIKE '${DATABASES[0]}';" | grep "${DATABASES[0]}")
+if [ -n "$initFlag" ]; then 
+    echo "数据库已经初始化过了，判断条件为${DATABASES[0]}存在"
+    exit
+fi
+
 # 创建数据库函数
 create_database() {
     local db_name=$1
