@@ -162,37 +162,14 @@ services:
     image: mariadb:10.8.2
     volumes:
       - ./config/mariadb/my.cnf:/etc/mysql/my.cnf
+      - ./config/mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     environment:
       MARIADB_ROOT_PASSWORD: password
     network_mode: "host"
-  # mariadb2:
-  #   container_name: mariadb2
-  #   image: mariadb:10.8.2
-  #   environment:
-  #     MARIADB_ROOT_PASSWORD: password
-  #   ports:
-  #     - "3305:3306"  
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:management-alpine
     network_mode: "host"
-  # rabbitmq2:
-  #   container_name: rabbitmq2
-  #   image: rabbitmq:management-alpine
-  #   network_mode: "host"
-  #   hostname: rabbitmq1
-  #   environment:
-  #     RABBITMQ_ERLANG_COOKIE: rabbitcookie
-  #     RABBITMQ_NODENAME: rabbit@rabbitmq1
-
-
-
-  # rabbitmq2:
-  #   container_name: rabbitmq2
-  #   image: rabbitmq:management-alpine
-  #   ports:
-  #     - "15673:15672"
-  #     - "5673:5672"
   redis:
     container_name: redis
     image: redis:latest
