@@ -16,10 +16,9 @@
         <module>basic-libs</module>
         <module>connector-server</module>
         <module>gateway-server</module>
-        <module>maintenance-libs</module>
+        <module>maintenance-server</module>
         <module>operation-server</module>
         <module>oss-server</module>
-        <module>rds-server</module>
         <module>vm-server</module>
         <module>ticket-server</module>
         <module>portal-server</module>

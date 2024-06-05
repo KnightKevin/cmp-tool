@@ -2,7 +2,6 @@
 version: "3.9"
 services:
   base:
-    container_name: base
     mem_limit: 2G
     cpus: 4
     build:
@@ -26,7 +25,7 @@ services:
       - nacos
 
   mc:
-    container_name: mc
+    # container_name: mc
     mem_limit: 1G
     build:
       context: .
@@ -37,7 +36,7 @@ services:
         condition: service_healthy
   
   vm:
-    container_name: vm
+    # container_name: vm
     mem_limit: 2G
     cpus: 4
     build:
@@ -54,7 +53,7 @@ services:
         condition: service_healthy
 
   oss:
-    container_name: oss
+    # container_name: oss
     mem_limit: 1G
     build:
       context: .
@@ -69,24 +68,24 @@ services:
       base:
         condition: service_healthy
 
-  rds:
-    container_name: rds
-    mem_limit: 2G
-    build:
-      context: .
-      dockerfile: Dockerfile-rds
-    network_mode: "host"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8101/actuator/health"]
-      interval: 10s
-      timeout: 3s
-      retries: 12
-    depends_on:
-      base:
-        condition: service_healthy
+  # rds:
+  #   # container_name: rds
+  #   mem_limit: 2G
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile-rds
+  #   network_mode: "host"
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8101/actuator/health"]
+  #     interval: 10s
+  #     timeout: 3s
+  #     retries: 12
+  #   depends_on:
+  #     base:
+  #       condition: service_healthy
         
   connector:
-    container_name: connector
+    # container_name: connector
     mem_limit: 1G
     build:
       context: .
@@ -104,7 +103,7 @@ services:
         condition: service_healthy
 
   operation:
-    container_name: operation
+    # container_name: operation
     mem_limit: 1G
     build:
       context: .
@@ -120,7 +119,7 @@ services:
         condition: service_healthy
 
   ticket:
-    container_name: ticket
+    # container_name: ticket
     mem_limit: 1G
     build:
       context: .
@@ -131,7 +130,7 @@ services:
         condition: service_healthy
 
   portal:
-    container_name: portal
+    # container_name: portal
     mem_limit: 1G
     build:
       context: .
@@ -150,7 +149,7 @@ services:
       - redis
 
   gateway:
-    container_name: gateway
+    # container_name: gateway
     mem_limit: 1G
     build:
       context: .
@@ -158,7 +157,7 @@ services:
     network_mode: "host"
 
   mariadb:
-    container_name: mariadb
+    # container_name: mariadb
     image: mariadb:10.8.2
     volumes:
       - ./config/mariadb/my.cnf:/etc/mysql/my.cnf
@@ -167,11 +166,11 @@ services:
       MARIADB_ROOT_PASSWORD: password
     network_mode: "host"
   rabbitmq:
-    container_name: rabbitmq
+    # container_name: rabbitmq
     image: rabbitmq:management-alpine
     network_mode: "host"
   redis:
-    container_name: redis
+    # container_name: redis
     image: redis:latest
     command: redis-server /usr/local/etc/redis/redis.conf
     network_mode: "host"
@@ -179,7 +178,7 @@ services:
       - ./config/redis/redis.conf:/usr/local/etc/redis/redis.conf
 
   nacos:
-    container_name: nacos
+    # container_name: nacos
     image: nacos/nacos-server:v2.2.3
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1:8848/nacos/v1/console/health/readiness"]

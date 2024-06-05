@@ -1,7 +1,10 @@
 #!/bin/bash
+
+
 # 定义MySQL的用户名和密码
 MYSQL_USER="root"
 MYSQL_PASSWORD="password"
+
 
 # 定义数据库名称数组
 DATABASES=(
@@ -15,13 +18,6 @@ DATABASES=(
 "zscmp_ticket"
 "zscmp_vm"
 )
-
-
-initFlag=$(mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "SHOW DATABASES LIKE '${DATABASES[0]}';" | grep "${DATABASES[0]}")
-if [ -n "$initFlag" ]; then 
-    echo "数据库已经初始化过了，判断条件为${DATABASES[0]}存在"
-    exit
-fi
 
 # 创建数据库函数
 create_database() {
