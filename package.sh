@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # 指定java版本
-export JAVA_HOME=/usr/local/jdk-17
+# export JAVA_HOME=/usr/local/jdk-17
 
 baseDir="."
 
 # 须要参与docker-compose的模块
-modules=("gateway" "connector" "portal" "base" "vm" "rds" "oss" "operation" "ticket" "maintenance")
+modules=("gateway" "connector" "portal" "base" "vm" "oss" "operation" "ticket" "maintenance")
 
 # 可能指定的模块
 module=$1
