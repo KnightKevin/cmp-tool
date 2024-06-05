@@ -5,44 +5,42 @@
 # 仓库地址
 repository_url="ssh://git@dev.zstack.io:9022/zstackio/cmp-server.git"
 
+# 配置文件路径
+CONFIG_FILE="branches.conf"
+
+# 检查配置文件是否存在
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "配置文件 $CONFIG_FILE 不存在."
+    exit 1
+fi
+
 # 分支列表
-branches=(
-    "basic-libs"
-    "base-server"
-    "gateway-server" 
-    "connector-server"
-    "maintenance-server"
-    "operation-server"
-    "vm-server"
-    "rds-server"
-    "oss-server"
-    "ticket-server"
-    "portal-server"
-    )
+branches=()
 
-# 目标文件夹
-base_folder="./"
 
-# 创建目标文件夹
-mkdir -p "$base_folder"
+# 读取配置文件并执行克隆操作
+while IFS=' = ' read -r key value
+do
+    # 根据配置文件中的键值对执行克隆
+    case $key in
+        branch)
+          branch="$value" 
+          branches+=($branch)
+        ;;
+        dir) 
+            if [ -d "$value" ]; then
+                echo "Skipping branch $branch. Folder already exists: $value"
+            else 
+                mkdir -p "$value" 
+                echo "正在克隆到 $value ..." 
+                git clone --branch "$branch" "$repository_url" "$value"
+            fi 
+        ;;
+    esac
+done < "$CONFIG_FILE"
 
-# 遍历分支列表并克隆指定分支到对应的文件夹
-for branch in "${branches[@]}"; do
-    # 提取仓库名称
-    repo_name=$(basename -s .git "$repository_url")
 
-    # 目标文件夹路径
-    target_folder="$base_folder/$branch"
 
-    # 检查目标文件夹是否存在，如果存在则跳过
-    if [ -d "$target_folder" ]; then
-        echo "Skipping branch $branch. Folder already exists: $target_folder"
-    else
-        # 克隆指定分支
-        git clone -b "$branch" "$repository_url" "$target_folder"
-        echo "Cloned branch $branch to $target_folder"
-    fi
-done
 
 # 生产pom文件的modules配置
 echo ""
