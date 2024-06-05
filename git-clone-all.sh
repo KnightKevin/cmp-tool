@@ -15,7 +15,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
 fi
 
 # 分支列表
-branches=()
+mvnModules=()
 
 
 # 读取配置文件并执行克隆操作
@@ -25,9 +25,9 @@ do
     case $key in
         branch)
           branch="$value" 
-          branches+=($branch)
         ;;
-        dir) 
+        dir)
+            mvnModules+=($value)
             if [ -d "$value" ]; then
                 echo "Skipping branch $branch. Folder already exists: $value"
             else 
@@ -44,7 +44,7 @@ done < "$CONFIG_FILE"
 
 # 生产pom文件的modules配置
 echo ""
-for branch in "${branches[@]}"; do
+for module in "${mvnModules[@]}"; do
     # 提取仓库名称
-    echo "<module>$branch</module>"
+    echo "<module>$module</module>"
 done
