@@ -11,7 +11,7 @@ modules=("gateway" "connector" "portal" "base" "vm" "rds" "oss" "operation" "tic
 # 可能指定的模块
 module=$1
 
-dockerComposeCmd="docker-compose up --remove-orphans --build -d"
+dockerComposeCmd="docker compose up --remove-orphans --build -d"
 
 
 ## 函数定义
