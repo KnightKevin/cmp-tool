@@ -11,7 +11,7 @@ modules=("gateway" "connector" "portal" "base" "vm" "oss" "operation" "ticket" "
 # 可能指定的模块
 module=$1
 
-dockerComposeCmd="docker-compose up --remove-orphans --build -d"
+dockerComposeCmd="docker compose up --remove-orphans --build -d"
 
 
 ## 函数定义
@@ -35,7 +35,7 @@ cpCmd() {
 }
 
 
-sh ./git-pull-all.sh
+# sh ./git-pull-all.sh
 
 
 echo "====== 打包开始 ======="
@@ -62,6 +62,8 @@ else
     $dockerComposeCmd
 
 fi
+
+mvn clean package -DskipTests > /dev/null
 
 
 

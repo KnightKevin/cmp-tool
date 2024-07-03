@@ -2,7 +2,6 @@
 version: "3.9"
 services:
   base:
-    mem_limit: 2G
     cpus: 4
     build:
       context: .
@@ -37,7 +36,6 @@ services:
   
   vm:
     # container_name: vm
-    mem_limit: 2G
     cpus: 4
     build:
       context: .
@@ -86,7 +84,7 @@ services:
         
   connector:
     # container_name: connector
-    mem_limit: 1G
+    # mem_limit: 1G
     build:
       context: .
       dockerfile: Dockerfile-connector

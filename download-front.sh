@@ -10,7 +10,7 @@ target_folder="/usr/local/zstack-cmp/upload/ui"
 portal="portal"
 
 # 下载 .tar 文件
-wget -O download_file.tar "http://172.20.15.213/frontendSource/4.0.0-dev/dist.tar"
+wget -O download_file.tar "http://172.20.15.213/frontendSource/4.0.3-eda/dist.tar"
 
 # 判断目标文件夹下的 portal 文件夹是否存在
 if [ -d "$target_folder/$portal" ]; then
