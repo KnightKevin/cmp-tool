@@ -35,7 +35,8 @@ for folder in "$DIR"/*; do
           continue
         fi
 
-        echo "Processing $(basename "$folder")..."
+        basename=$(basename "$folder")
+        echo "Processing $("$basename")..."
 
 
         git add .
@@ -50,7 +51,7 @@ for folder in "$DIR"/*; do
         git push
 
 
-        commitedDirs+=("$folder $commit_id")
+        commitedDirs+=("$basename $commit_id")
 
         echo "Done."
     fi
@@ -62,6 +63,9 @@ done
 # above git project commit:
 echo "############### result #################"
 echo "The following directories execute 'git commit'"
+
+echo "后端"
+echo "commit:"
 for ((i=0; i<${#commitedDirs[@]}; i++)); do
     echo -e "\e[0;36m${commitedDirs[$i]}\e[0m"
 done

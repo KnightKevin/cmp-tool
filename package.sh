@@ -33,7 +33,7 @@ cpCmd() {
 }
 
 
-sh ./git-pull-all.sh
+# sh ./git-pull-all.sh
 
 
 echo "====== 打包开始 ======="
