@@ -63,7 +63,7 @@ else
 
 fi
 
-mvn clean package -DskipTests > /dev/null
+mvn clean
 
 
 

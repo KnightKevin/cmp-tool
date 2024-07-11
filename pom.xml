@@ -22,6 +22,8 @@
         <module>vm-server</module>
         <module>ticket-server</module>
         <module>portal-server</module>
+        <module>hpc-server</module>
+        <module>container-server</module>
     </modules>
 
     <!-- 构建配置 -->

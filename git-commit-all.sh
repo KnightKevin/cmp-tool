@@ -36,7 +36,7 @@ for folder in "$DIR"/*; do
         fi
 
         basename=$(basename "$folder")
-        echo "Processing $(basename "$folder")..."
+        echo "Processing $("$basename")..."
 
 
         git add .
@@ -67,5 +67,5 @@ echo "The following directories execute 'git commit'"
 echo "后端"
 echo "commit:"
 for ((i=0; i<${#commitedDirs[@]}; i++)); do
-    echo -e "\e[0;36m${commitedDirs[$i]}\e[0m"
+    echo -e " $((i+1)). \e[0;36m${commitedDirs[$i]}\e[0m"
 done

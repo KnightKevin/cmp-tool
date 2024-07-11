@@ -148,7 +148,6 @@ services:
 
   gateway:
     # container_name: gateway
-    mem_limit: 1G
     build:
       context: .
       dockerfile: Dockerfile-gateway
