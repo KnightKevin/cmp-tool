@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class ${className}Reply {
 <#list list as i>
-    private ${dbTypeConvert(i.dataType)} ${i.varName};
+    private ${dbColumnToJavaType(i.type)} ${toCamelCaseMethod(i.name)};
 </#list>
 
 }

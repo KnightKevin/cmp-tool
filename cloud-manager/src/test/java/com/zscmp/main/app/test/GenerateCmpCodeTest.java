@@ -10,38 +10,30 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.sql.DataSource;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import com.zscmp.main.app.App;
 import com.zscmp.main.app.DbColumnToJavaType;
 import com.zscmp.main.app.QFieldBuild;
 import com.zscmp.main.app.ToCamelCaseMethod;
 import com.zscmp.main.app.model.DbField;
-import com.zscmp.main.app.mybatis.AlarmMsg;
-import com.zscmp.main.app.mybatis.AlarmMsgMapper;
-import com.zscmp.main.app.mybatis.AlarmMsgUser;
-import com.zscmp.main.app.mybatis.AlarmMsgUserMapper;
 
-import cn.hutool.core.date.DateUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@SpringBootTest
+@SpringBootTest(classes = App.class)
 public class GenerateCmpCodeTest {
 
     private final String baseDir = "target/gen/";
@@ -56,7 +48,7 @@ public class GenerateCmpCodeTest {
     @Test
     public void genCode() throws Exception {
 
-        final String tableName = "cwalker_detection";
+        final String tableName = "smg_sys_scan_task";
 
         final String className = toCamelCase(tableName);
 
@@ -96,10 +88,12 @@ public class GenerateCmpCodeTest {
 
         final String baseDir = "target/gen/";
         final String entityFilePath = baseDir+className+".java";
+        final String replyFilePath = baseDir+className+"Reply.java";
         final String qFilePath = baseDir+String.format("Q%s.java", className);
         final String serviceFilePath = baseDir+String.format("I%sService.java", className);
         final String serviceImplFilePath = baseDir+String.format("%sServiceImpl.java", className);
         final String qryFilePath = baseDir+String.format("%sQry.java", className);
+
 
 
         deleteDir(baseDir);
@@ -108,6 +102,8 @@ public class GenerateCmpCodeTest {
 
         final String fltPrefix = "cmp/";
         genFile(fltPrefix+"entity.ftl", entityFilePath, model);
+
+        genFile(fltPrefix+"reply.ftl", replyFilePath, model);
 
         genFile(fltPrefix+"q.ftl", qFilePath, model);
 

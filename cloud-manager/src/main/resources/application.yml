@@ -6,3 +6,21 @@ spring:
     url: jdbc:mysql://localhost:3306/zscmp_vm?rewriteBatchedStatements=true
     username: root
     password: password
+
+
+  # ldap:
+  #   urls: ldap://172.20.12.122:389
+  #   base: dc=zstack,dc=io
+  #   username: cn=admin,dc=zstack,dc=io
+  #   password: ZStack@123
+  #   embedded:
+  #     ldif: classpath:schema.ldif
+
+  # 客户环境，不要随便用
+  # ldap:
+  # urls: ldap://172.20.12.38:389
+  # base: dc=eda,dc=io
+  # username: cn=admin,dc=eda,dc=io
+  # password: EDA@123
+  # embedded:
+  #   ldif: classpath:schema.ldif
