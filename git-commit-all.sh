@@ -36,7 +36,7 @@ for folder in "$DIR"/*; do
         fi
 
         basename=$(basename "$folder")
-        echo "Processing $("$basename")..."
+        echo "Processing $basename..."
 
 
         git add .

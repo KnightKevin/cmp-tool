@@ -61,9 +61,5 @@ else
 
 fi
 
-
-
-
-
-
+mvn clean
 
