@@ -5,4 +5,4 @@ ADD ./tar/zstack-cmp.jar app.jar
 RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo "Asia/Shanghai" > /etc/timezone
 
 # 各个参数按情况可自行修改
-ENTRYPOINT ["java","-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005","/app.jar","--db.password=password", "--firstLaunchInit.locale=en_US"]
+ENTRYPOINT ["java","-jar","-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005","/app.jar","--db.password=password", "--firstLaunchInit.locale=en_US"]

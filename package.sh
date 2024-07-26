@@ -33,7 +33,7 @@ cpCmd() {
 
 
 echo "====== 打包开始 ======="
-# mvn clean package -T 4 -Pprod -DskipTests
+mvn clean package -T 4 -Pprod -DskipTests
 echo "====== 打包结束 ======="
 
 

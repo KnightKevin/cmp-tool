@@ -7,8 +7,6 @@ services:
       dockerfile: Dockerfile-base
     network_mode: "host"
     volumes:
-      - /usr/local/zstack-cmp:/usr/local/zstack-cmp
-      - /root/cmp:/usr/local/zstack-cmp/upload/sourceCode
       - /sbin/dmidecode:/sbin/dmidecode
       - /dev/mem:/dev/me
     healthcheck:
