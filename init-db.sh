@@ -8,15 +8,7 @@ MYSQL_PASSWORD="password"
 
 # 定义数据库名称数组
 DATABASES=(
-"zscmp_base"
-"zscmp_connector"
-"zscmp_mc"
-"zscmp_operation"
-"zscmp_oss"
-"zscmp_portal"
-"zscmp_rds"
-"zscmp_ticket"
-"zscmp_vm"
+"zstack_cmp"
 )
 
 # 创建数据库函数

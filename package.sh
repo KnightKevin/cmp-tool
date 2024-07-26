@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # 指定java版本
-export JAVA_HOME=/usr/local/jdk-17
+# export JAVA_HOME=/usr/local/jdk-17
 
 baseDir="."
 
 # 须要参与docker-compose的模块
-modules=("gateway" "connector" "portal" "base" "vm" "rds" "oss" "operation" "ticket" "maintenance")
+modules=("base")
 
 # 可能指定的模块
 module=$1
@@ -25,13 +25,7 @@ cpCmd() {
       echo "目录创建成功！"
   fi
 
-	if [ "$1" = "gateway" ]; then
-		cp -f $baseDir/$module-server/target/zscmp-gateway.jar ./tar/zscmp-gateway.jar
-	elif [ "$1" = "maintenance" ];then
-		cp -f $baseDir/$module-server/starter/target/zscmp-mc.jar ./tar/zscmp-mc.jar
-	else
-		cp -f $baseDir/$module-server/starter/target/zscmp-$module.jar ./tar/zscmp-$module.jar
-	fi
+	cp -f $baseDir/$module-server/starter/target/zstack-cmp.jar ./tar/zstack-cmp.jar
 }
 
 
@@ -39,7 +33,7 @@ cpCmd() {
 
 
 echo "====== 打包开始 ======="
-mvn clean package -T 4 -Pprod -DskipTests
+# mvn clean package -T 4 -Pprod -DskipTests
 echo "====== 打包结束 ======="
 
 
