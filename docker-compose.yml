@@ -151,6 +151,9 @@ services:
       context: .
       dockerfile: Dockerfile-gateway
     network_mode: "host"
+    depends_on:
+      - nacos
+      - redis
 
   mariadb:
     # # container_name: mariadb

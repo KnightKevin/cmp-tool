@@ -13,7 +13,13 @@ for folder in "$DIR"/*; do
 
         # 检查文件夹是否是一个Git项目
         if [ -d ".git" ]; then
-            git update-index --assume-unchanged starter/src/main/resources/application-local.yml
+
+            if [ -e "starter/src/main/resources/application-local.yml" ]; then
+                git update-index --assume-unchanged starter/src/main/resources/application-local.yml
+            elif [ -e "src/main/resources/application-local.yml" ]; then
+                git update-index --assume-unchanged src/main/resources/application-local.yml
+            fi
+            
         fi
     fi
 done
