@@ -13,46 +13,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zscmp.main.app.App;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 
-@SpringBootTest
+@SpringBootTest(classes = App.class)
 @Slf4j
 public class WxTest {
 
-    private String corpId = "x";
-    private String agentId = "x";
-    private String secret = "x";
-    private String accessToken = "Mj3iiBGQ9aDtr4nU-BZsnu3y2bel4nNveIMagZsikXeF_dnrStCb9BRdI3KkmKxd-0pIdMN9IKHzGClQTcimpqZ2y1fmG7cnYpaIS7xJy1YlvXbp7B5WfgZ8n0rGhAHgQypMgoC8hO-r_TJefpfsCRtoVFXsNfPrWGw14R7g8fbrq4AH8ACsjU7xQ-R_OjQPsO6jkzJlcVt6DZi1ZWbyMg";
+    String cropId = "ww2ae67a72a1a1ea16";
+    Integer agentId = 1000089;
+    String secret = "evOtm_YQMMC5RcvygaFLoFNUeF_Cv5a5-3DVQti3XJA";
+    private String accessToken = "FESJDBDmA8QfB0Pzss12_Atkb6Y1e7qgdT2LQDyxg7-6tjWsad7So-UmETFpmttLG-hfP5_s3c2SrLHZyB2FuBJYZWJuOe6QrsPddzVMYuPD9Sl8UaqM5Okmmhq2_sNEJ5nt2uGm-kf30zH9LKF9KRhQNZz78QLhVwcMUAip0wKits887aVsq07HNtR-lUQRxhLnvtPUZh_4Dh8U_HnHVw";
 
     @Autowired
     RestTemplate restTemplate;
 
     @Test
     public void aTest() throws IOException {
-        String toUser = "toUser";
         String content = "content";
 
-        refreshToken();
+        String userId = "w8000296";
 
-        sendMessage(toUser, content);
-    }
-
-    private void refreshToken() {
-        String url = String.format("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=%s&corpsecret=%s", corpId, secret);
-        ResponseEntity<JSONObject> response = restTemplate.getForEntity(url, JSONObject.class);
-        HttpStatus httpStatus = response.getStatusCode();
-        if (HttpStatus.OK != httpStatus) {
-            throw new RuntimeException("get token error");
-        }
-        JSONObject body  = response.getBody();
-        if (body.getInteger("errcode") != 0) {
-            throw new RuntimeException(String.format("get token errCode %s", body.toJSONString()));
-        }
-        
-        this.accessToken = (String) response.getBody().get("access_token");
+        sendMessage(userId, content);
     }
 
     public String getAccessToken() {
@@ -60,6 +44,7 @@ public class WxTest {
     }
 
     public void sendMessage(String toUser, String content) {
+
         String url = String.format("https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=%s", getAccessToken());
         Map<String, Object> message = new HashMap<>();
         message.put("touser", toUser);

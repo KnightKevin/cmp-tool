@@ -6,7 +6,9 @@ spring:
     url: jdbc:mysql://localhost:3306/zscmp_vm?rewriteBatchedStatements=true
     username: root
     password: password
-
+  thymeleaf:
+    prefix: classpath:/html/
+    suffix: .html
 
   # ldap:
   #   urls: ldap://172.20.12.122:389

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -27,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -61,16 +63,18 @@ public class ATest {
     @Test
     public void bTest() throws Exception {
 
-        String dd = "dddddd";
-        try {
-            JSONObject d = JSON.parseObject(dd);
-        } catch(Exception e) {
-            log.info("asdf");
-        }
+        String url  = "https://open.weixin.qq.com/connect/oauth2/authorize?dd=cc";
 
-        AO o = new AO("aaa", "bbb");
+        //appid=ww5581718d4eff583d&agentid=1000017&redirect_uri=${redirectUrl}&response_type=code&scope=snsapi_base&state=STATE
 
-        log.info("json : {}", JSONObject.toJSONString(o, new PasswordValueFilter()));
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
+            .queryParam("redirect_uri", "")
+            .queryParam("response_type", "code")
+            .queryParam("scope", "snsapi_base")
+            .queryParam("state", "STATE")
+            .encode()
+            ;
+        log.info("cccc {}", builder.toUriString());
     }
 
     @Test
